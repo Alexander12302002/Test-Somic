@@ -13,8 +13,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
-const mongodb_1 = require("mongodb");
 const mongoose_1 = require("mongoose");
+const mongodb_1 = require("mongodb");
 const mongoose_2 = require("@nestjs/mongoose");
 const common_1 = require("@nestjs/common");
 let UsersService = class UsersService {

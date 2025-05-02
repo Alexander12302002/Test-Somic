@@ -1,5 +1,5 @@
+import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
-import { Model, Types } from 'mongoose';
 import { User } from './entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -61,6 +61,5 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
   }
 }
