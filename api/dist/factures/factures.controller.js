@@ -12,20 +12,20 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArticlesController = void 0;
-const articles_service_1 = require("./articles.service");
-const create_article_dto_1 = require("./dto/create-article.dto");
-const update_article_dto_1 = require("./dto/update-article.dto");
+exports.FacturesController = void 0;
+const factures_service_1 = require("./factures.service");
+const create_facture_dto_1 = require("./dto/create-facture.dto");
+const update_facture_dto_1 = require("./dto/update-facture.dto");
 const common_1 = require("@nestjs/common");
-let ArticlesController = class ArticlesController {
-    articlesService;
-    constructor(articlesService) {
-        this.articlesService = articlesService;
+let FacturesController = class FacturesController {
+    facturesService;
+    constructor(facturesService) {
+        this.facturesService = facturesService;
     }
-    async create(createArticleDto) {
+    async create(createFactureDto) {
         try {
-            const article = await this.articlesService.create(createArticleDto);
-            return { message: 'Article successfully created', article };
+            const user = await this.facturesService.create(createFactureDto);
+            return { message: 'Facture successfully created', user };
         }
         catch (error) {
             return { message: error.message };
@@ -33,8 +33,8 @@ let ArticlesController = class ArticlesController {
     }
     async findAll() {
         try {
-            const articles = await this.articlesService.findAll();
-            return { message: 'All Article registered', articles };
+            const articles = await this.facturesService.findAll();
+            return { message: 'All factures registered', articles };
         }
         catch (error) {
             return { message: error.message };
@@ -42,17 +42,17 @@ let ArticlesController = class ArticlesController {
     }
     async findOne(id) {
         try {
-            const Article = await this.articlesService.findOne(id);
-            return { message: 'Article found', Article };
+            const Facture = await this.facturesService.findOne(id);
+            return { message: 'Facture found', Facture };
         }
         catch (error) {
             return { message: error.message };
         }
     }
-    async update(id, updateArticleDto) {
+    update(id, updateFactureDto) {
         try {
-            const Article = this.articlesService.update(id, updateArticleDto);
-            return { message: 'updated Article', Article };
+            const Facture = this.facturesService.update(id, updateFactureDto);
+            return { message: 'updated Facture', Facture };
         }
         catch (error) {
             return { message: error.message };
@@ -60,52 +60,52 @@ let ArticlesController = class ArticlesController {
     }
     async remove(id) {
         try {
-            await this.articlesService.remove(id);
-            return { message: 'deleted Article' };
+            await this.facturesService.remove(id);
+            return { message: 'deleted Facture' };
         }
         catch (error) {
             return { message: error.message };
         }
     }
 };
-exports.ArticlesController = ArticlesController;
+exports.FacturesController = FacturesController;
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_article_dto_1.CreateArticleDto]),
+    __metadata("design:paramtypes", [create_facture_dto_1.CreateFactureDto]),
     __metadata("design:returntype", Promise)
-], ArticlesController.prototype, "create", null);
+], FacturesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], ArticlesController.prototype, "findAll", null);
+], FacturesController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], ArticlesController.prototype, "findOne", null);
+], FacturesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_article_dto_1.UpdateArticleDto]),
-    __metadata("design:returntype", Promise)
-], ArticlesController.prototype, "update", null);
+    __metadata("design:paramtypes", [String, update_facture_dto_1.UpdateFactureDto]),
+    __metadata("design:returntype", void 0)
+], FacturesController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], ArticlesController.prototype, "remove", null);
-exports.ArticlesController = ArticlesController = __decorate([
-    (0, common_1.Controller)('articles'),
-    __metadata("design:paramtypes", [articles_service_1.ArticlesService])
-], ArticlesController);
-//# sourceMappingURL=articles.controller.js.map
+], FacturesController.prototype, "remove", null);
+exports.FacturesController = FacturesController = __decorate([
+    (0, common_1.Controller)('factures'),
+    __metadata("design:paramtypes", [factures_service_1.FacturesService])
+], FacturesController);
+//# sourceMappingURL=factures.controller.js.map

@@ -14,6 +14,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const config_1 = require("@nestjs/config");
 const users_module_1 = require("./users/users.module");
 const articles_module_1 = require("./articles/articles.module");
+const factures_module_1 = require("./factures/factures.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,7 +32,8 @@ exports.AppModule = AppModule = __decorate([
                 connectionName: 'db1',
             }),
             users_module_1.UsersModule,
-            articles_module_1.ArticlesModule
+            articles_module_1.ArticlesModule,
+            factures_module_1.FacturesModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

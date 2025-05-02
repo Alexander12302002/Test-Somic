@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ArticlesService = void 0;
 const mongoose_1 = require("mongoose");
 const mongodb_1 = require("mongodb");
-const common_1 = require("@nestjs/common");
 const mongoose_2 = require("@nestjs/mongoose");
+const common_1 = require("@nestjs/common");
 let ArticlesService = class ArticlesService {
     ArticuleModel;
     KardexModel;

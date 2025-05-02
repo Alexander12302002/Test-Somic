@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { ArticlesModule } from './articles/articles.module';
+import { FacturesModule } from './factures/factures.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { ArticlesModule } from './articles/articles.module';
       connectionName: 'db1',
     }),
     UsersModule,
-    ArticlesModule
+    ArticlesModule,
+    FacturesModule
   ],
   controllers: [AppController],
   providers: [AppService],

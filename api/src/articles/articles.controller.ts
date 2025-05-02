@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 
 @Controller('articles')
 export class ArticlesController {

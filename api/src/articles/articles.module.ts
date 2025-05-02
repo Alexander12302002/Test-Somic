@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ArticlesService } from './articles.service';
-import { ArticlesController } from './articles.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ArticleSchema } from './entities/article.entity';
+import { ArticlesService } from './articles.service';
 import { KardexSchema } from './entities/kardex.entity';
+import { ArticleSchema } from './entities/article.entity';
+import { ArticlesController } from './articles.controller';
 
 
 @Module({

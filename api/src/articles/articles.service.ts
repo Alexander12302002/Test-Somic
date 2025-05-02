@@ -1,12 +1,11 @@
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
-import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Kardex } from './entities/kardex.entity';
 import { Article } from './entities/article.entity';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { CreateArticleDto, CreateKardexDto } from './dto/create-article.dto';
-import { promises } from 'dns';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 
 @Injectable()
 export class ArticlesService {
