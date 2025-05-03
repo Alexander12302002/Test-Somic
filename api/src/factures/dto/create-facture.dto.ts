@@ -16,6 +16,10 @@ export class CreateFactureDto {
     @IsNumber()
     @IsOptional()
     Fac_Total: Number
+
+    @IsNumber()
+    @IsOptional()
+    Fac_Total_cost: Number
 }
 
 export class ArticlesDTO {
@@ -26,9 +30,18 @@ export class ArticlesDTO {
     Fac_Amount: Number
 
     @IsNumber()
+    @IsOptional()
     Fac_Unit_Price: Number
 
     @IsNumber()
     @IsOptional()
+    Fac_cost: Number
+
+    @IsNumber()
+    @IsOptional()
     Fac_Total_Product: Number
+
+    @IsNumber()
+    @IsOptional()
+    Fac_Total_cost: Number
 }

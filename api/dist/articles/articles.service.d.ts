@@ -1,12 +1,10 @@
 import { Model } from 'mongoose';
-import { Kardex } from './entities/kardex.entity';
 import { Article } from './entities/article.entity';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { CreateArticleDto } from './dto/create-article.dto';
 export declare class ArticlesService {
     private ArticuleModel;
-    private KardexModel;
-    constructor(ArticuleModel: Model<Article>, KardexModel: Model<Kardex>);
+    constructor(ArticuleModel: Model<Article>);
     create(createArticleDto: CreateArticleDto): Promise<Article>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, Article, {}> & Article & Required<{
         _id: unknown;

@@ -37,6 +37,26 @@ export class UsersController {
     }
   }
 
+  @Get('id/:id')
+  async findOneById(@Param('id') id: string) {
+    try {
+      const user = await this.usersService.findOneById(id);
+      return { message: 'User found', user }
+    } catch (error) {
+      return { message: error.message };
+    }
+  }
+
+  @Get('wallet/:id')
+  async findWalletUser(@Param('id') id: string) {
+    try {
+      const userWallet = await this.usersService.findWalletUser(id);
+      return { message: 'Wallet of the user foind', userWallet }
+    } catch (error) {
+      return { message: error.message };
+    }
+  }
+
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     try {

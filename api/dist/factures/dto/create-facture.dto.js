@@ -17,6 +17,7 @@ class CreateFactureDto {
     Fac_idUser;
     Fac_Articles;
     Fac_Total;
+    Fac_Total_cost;
 }
 exports.CreateFactureDto = CreateFactureDto;
 __decorate([
@@ -38,11 +39,18 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], CreateFactureDto.prototype, "Fac_Total", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreateFactureDto.prototype, "Fac_Total_cost", void 0);
 class ArticlesDTO {
     Fac_idArticle;
     Fac_Amount;
     Fac_Unit_Price;
+    Fac_cost;
     Fac_Total_Product;
+    Fac_Total_cost;
 }
 exports.ArticlesDTO = ArticlesDTO;
 __decorate([
@@ -55,11 +63,22 @@ __decorate([
 ], ArticlesDTO.prototype, "Fac_Amount", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], ArticlesDTO.prototype, "Fac_Unit_Price", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
+], ArticlesDTO.prototype, "Fac_cost", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
 ], ArticlesDTO.prototype, "Fac_Total_Product", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], ArticlesDTO.prototype, "Fac_Total_cost", void 0);
 //# sourceMappingURL=create-facture.dto.js.map

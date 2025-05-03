@@ -49,6 +49,24 @@ let UsersController = class UsersController {
             return { message: error.message };
         }
     }
+    async findOneById(id) {
+        try {
+            const user = await this.usersService.findOneById(id);
+            return { message: 'User found', user };
+        }
+        catch (error) {
+            return { message: error.message };
+        }
+    }
+    async findWalletUser(id) {
+        try {
+            const userWallet = await this.usersService.findWalletUser(id);
+            return { message: 'Wallet of the user foind', userWallet };
+        }
+        catch (error) {
+            return { message: error.message };
+        }
+    }
     async update(id, updateUserDto) {
         try {
             const user = await this.usersService.update(id, updateUserDto);
@@ -89,6 +107,20 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Get)('id/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findOneById", null);
+__decorate([
+    (0, common_1.Get)('wallet/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findWalletUser", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),

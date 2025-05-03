@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { ArticlesModule } from './articles/articles.module';
 import { FacturesModule } from './factures/factures.module';
+import { KardexModule } from './kardex/kardex.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { FacturesModule } from './factures/factures.module';
     }),
     UsersModule,
     ArticlesModule,
-    FacturesModule
+    FacturesModule,
+    KardexModule
   ],
   controllers: [AppController],
   providers: [AppService],

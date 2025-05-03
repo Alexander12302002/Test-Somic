@@ -19,8 +19,10 @@ const mongoose_2 = require("@nestjs/mongoose");
 const common_1 = require("@nestjs/common");
 let UsersService = class UsersService {
     userModel;
-    constructor(userModel) {
+    factureModel;
+    constructor(userModel, factureModel) {
         this.userModel = userModel;
+        this.factureModel = factureModel;
     }
     async create(createUserDto) {
         const { User_email, User_Nit, User_CC } = createUserDto;
@@ -47,6 +49,35 @@ let UsersService = class UsersService {
         }
         return User;
     }
+    async findOneById(id) {
+        const objectId = new mongodb_1.ObjectId(id);
+        const user = await this.userModel.findById(objectId);
+        if (!user) {
+            throw new common_1.ConflictException('User not found');
+        }
+        return user;
+    }
+    async findWalletUser(id) {
+        const objectId = new mongodb_1.ObjectId(id);
+        const user = await this.userModel.findById(objectId);
+        if (!user) {
+            throw new common_1.ConflictException('User not found');
+        }
+        const factures = await this.factureModel.aggregate([{
+                $match: {
+                    Fac_idUser: objectId,
+                    Fac_Total: { $gt: 0 }
+                }
+            },
+            {
+                $group: {
+                    _id: "$Fac_idUser",
+                    totalUsuario: { $sum: "$Fac_Total" }
+                }
+            }
+        ]);
+        return factures;
+    }
     async update(id, updateUserDto) {
         const objectId = new mongodb_1.ObjectId(id);
         const user = await this.userModel.findById(objectId);
@@ -71,6 +102,8 @@ exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_2.InjectModel)('users', 'db1')),
-    __metadata("design:paramtypes", [mongoose_1.Model])
+    __param(1, (0, mongoose_2.InjectModel)('factures', 'db1')),
+    __metadata("design:paramtypes", [mongoose_1.Model,
+        mongoose_1.Model])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

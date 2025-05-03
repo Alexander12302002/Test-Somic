@@ -9,8 +9,11 @@ exports.FactureSchema = new mongoose_1.Schema({
             Fac_idArticle: { type: mongoose_1.Schema.Types.ObjectId, ref: 'articles' },
             Fac_Amount: { type: Number, require: true },
             Fac_Unit_Price: { type: Number, require: true },
-            Fac_Total_Product: { type: Number, require: true }
+            Fac_cost: { type: Number, require: true },
+            Fac_Total_Product: { type: Number, require: true },
+            Fac_Total_cost: { type: Number, require: true }
         }],
     Fac_Total: { type: Number, require: true },
+    Fac_Total_cost: { type: Number, require: true }
 });
 //# sourceMappingURL=facture.entity.js.map

@@ -34,15 +34,14 @@ let FacturesService = class FacturesService {
         }
         if (createFactureDto.Fac_Articles && createFactureDto.Fac_Articles.length > 0) {
             const articleIds = createFactureDto.Fac_Articles.map(article => new mongodb_1.ObjectId(article.Fac_idArticle));
-            const existingArticles = await this.ArticuleModel.find({
-                _id: { $in: articleIds }
-            });
+            const existingArticles = await this.ArticuleModel.find({ _id: { $in: articleIds } });
             const existingArticleIds = existingArticles.map(art => art.id.toString());
             const missingArticles = articleIds.filter(id => !existingArticleIds.includes(id.toString()));
             if (missingArticles.length > 0) {
                 throw new common_1.ConflictException(`Los siguientes artículos no existen: ${missingArticles.join(', ')}`);
             }
             let totalFactura = 0;
+            let totalCosto = 0;
             for (const articleDto of createFactureDto.Fac_Articles) {
                 const articleData = existingArticles.find(a => a.id.toString() === articleDto.Fac_idArticle.toString());
                 if (!articleData) {
@@ -50,14 +49,27 @@ let FacturesService = class FacturesService {
                 }
                 const cantidad = Number(articleDto.Fac_Amount);
                 const balance = Number(articleData.Art_balance);
+                const precioVenta = Number(articleData.Art_sale_price);
+                const costoArticulo = Number(articleData.Art_cost);
+                if (cantidad === 0) {
+                    throw new common_1.ConflictException(`La cantidad no puede ser cero para el artículo: ${articleData.Art_Name}`);
+                }
                 if (cantidad < 0 && balance + cantidad < 0) {
                     throw new common_1.ConflictException(`No hay suficiente saldo para el artículo: ${articleData.Art_Name}`);
                 }
-                articleDto.Fac_Total_Product = cantidad * Number(articleDto.Fac_Unit_Price);
+                articleDto.Fac_Unit_Price = precioVenta;
+                articleDto.Fac_cost = costoArticulo;
+                articleDto.Fac_Total_Product = Math.abs(cantidad * precioVenta);
+                articleDto.Fac_Total_cost = Math.abs(cantidad * costoArticulo);
+                if (cantidad < 0 && precioVenta < costoArticulo) {
+                    throw new common_1.ConflictException(`El precio de venta del artículo "${articleData.Art_Name}" no puede ser menor al costo (${costoArticulo}).`);
+                }
                 totalFactura += Number(articleDto.Fac_Total_Product);
+                totalCosto += Number(articleDto.Fac_Total_cost);
                 await this.ArticuleModel.updateOne({ _id: articleData._id }, { $inc: { Art_balance: cantidad } });
             }
             createFactureDto.Fac_Total = totalFactura;
+            createFactureDto.Fac_Total_cost = totalCosto;
         }
         const facture = new this.factureModel(createFactureDto);
         try {

@@ -29,6 +29,20 @@ export declare class UsersController {
         message: any;
         user?: undefined;
     }>;
+    findOneById(id: string): Promise<{
+        message: string;
+        user: import("./entities/user.entity").User;
+    } | {
+        message: any;
+        user?: undefined;
+    }>;
+    findWalletUser(id: string): Promise<{
+        message: string;
+        userWallet: any[];
+    } | {
+        message: any;
+        userWallet?: undefined;
+    }>;
     update(id: string, updateUserDto: UpdateUserDto): Promise<{
         message: string;
         user: import("./entities/user.entity").User;

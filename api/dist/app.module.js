@@ -15,6 +15,7 @@ const config_1 = require("@nestjs/config");
 const users_module_1 = require("./users/users.module");
 const articles_module_1 = require("./articles/articles.module");
 const factures_module_1 = require("./factures/factures.module");
+const kardex_module_1 = require("./kardex/kardex.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -33,7 +34,8 @@ exports.AppModule = AppModule = __decorate([
             }),
             users_module_1.UsersModule,
             articles_module_1.ArticlesModule,
-            factures_module_1.FacturesModule
+            factures_module_1.FacturesModule,
+            kardex_module_1.KardexModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

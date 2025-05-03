@@ -12,12 +12,14 @@ const users_service_1 = require("./users.service");
 const mongoose_1 = require("@nestjs/mongoose");
 const user_entity_1 = require("./entities/user.entity");
 const users_controller_1 = require("./users.controller");
+const facture_entity_1 = require("../factures/entities/facture.entity");
 let UsersModule = class UsersModule {
 };
 exports.UsersModule = UsersModule;
 exports.UsersModule = UsersModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            mongoose_1.MongooseModule.forFeature([{ name: 'factures', schema: facture_entity_1.FactureSchema }], 'db1'),
             mongoose_1.MongooseModule.forFeature([{ name: 'users', schema: user_entity_1.UserSchema }], 'db1')
         ],
         controllers: [users_controller_1.UsersController],

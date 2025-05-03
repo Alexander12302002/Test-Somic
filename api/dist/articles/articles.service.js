@@ -19,23 +19,12 @@ const mongoose_2 = require("@nestjs/mongoose");
 const common_1 = require("@nestjs/common");
 let ArticlesService = class ArticlesService {
     ArticuleModel;
-    KardexModel;
-    constructor(ArticuleModel, KardexModel) {
+    constructor(ArticuleModel) {
         this.ArticuleModel = ArticuleModel;
-        this.KardexModel = KardexModel;
     }
     async create(createArticleDto) {
-        const Createkardex = new this.KardexModel({
-            Kar_Date_Admission: createArticleDto.Art_Date_Admission,
-            Kar_Name: createArticleDto.Art_Name,
-            Kar_laboratory: createArticleDto.Art_laboratory,
-            Kar_balance: createArticleDto.Art_balance,
-            Kar_cost: createArticleDto.Art_cost,
-            Kar_sale_price: createArticleDto.Art_sale_price
-        });
         const article = new this.ArticuleModel(createArticleDto);
         try {
-            await Createkardex.save();
             return article.save();
         }
         catch (error) {
@@ -82,8 +71,6 @@ exports.ArticlesService = ArticlesService;
 exports.ArticlesService = ArticlesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_2.InjectModel)('articles', 'db1')),
-    __param(1, (0, mongoose_2.InjectModel)('kardex', 'db1')),
-    __metadata("design:paramtypes", [mongoose_1.Model,
-        mongoose_1.Model])
+    __metadata("design:paramtypes", [mongoose_1.Model])
 ], ArticlesService);
 //# sourceMappingURL=articles.service.js.map
