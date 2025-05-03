@@ -5,23 +5,24 @@ import axios from 'axios'
 const show = ref(true) // controla visibilidad
 const error = ref(null)
 
-const article = ref({
-  Art_Date_Admission: '',
-  Art_Name: '',
-  Art_laboratory: '',
-  Art_balance: 0,
-  Art_cost: 0,
-  Art_sale_price: 0,
+const User = ref({
+    User_Name: '',
+    User_LastName: '',
+    User_email: '',
+    User_Nit: '',
+    User_CC: '',
+    User_quota: 0,
+    User_term: 0,
 })
 
 const handleSubmit = async (e) => {
   e.preventDefault()
   try {
-    await axios.post('http://localhost:3000/articles/', article.value)
-    alert('Artículo creado exitosamente')
+    await axios.post('http://localhost:3000/Users/', User.value)
+    alert('Usuario creado exitosamente')
     show.value = false
   } catch (err) {
-    error.value = 'Error al crear artículo'
+    error.value = 'Error al crear usuario'
     console.error(err)
   }
 }
@@ -34,37 +35,41 @@ const closePopup = () => {
 <template>
   <div v-if="show" class="popup-overlay">
     <div class="popup-content">
-      <h2>Agregar Nuevo Artículo</h2>
+      <h2>Agregar Nuevo Usuario</h2>
       <form @submit="handleSubmit">
         <label>
-          Fecha:
-          <input type="date" v-model="article.Art_Date_Admission" required />
-        </label>
-        <label>
           Nombre:
-          <input type="text" v-model="article.Art_Name" required />
+          <input type="text" v-model="User.User_Name" required />
         </label>
         <label>
-          Laboratorio:
-          <input type="text" v-model="article.Art_laboratory" required />
+          Apellido:
+          <input type="text" v-model="User.User_LastName" required />
         </label>
         <label>
-          Saldo:
-          <input type="number" v-model="article.Art_balance" required />
+          Email:
+          <input type="email" v-model="User.User_email" required />
         </label>
         <label>
-          Costo:
-          <input type="number" v-model="article.Art_cost" required />
+          Nit:
+          <input type="text" v-model="User.User_Nit" required />
         </label>
         <label>
-          Precio de venta:
-          <input type="number" v-model="article.Art_sale_price" required />
+          CC:
+          <input type="text" v-model="User.User_CC" required />
+        </label>
+        <label>
+          Cupo:
+          <input type="number" v-model="User.User_quota" required />
+        </label>
+        <label>
+          Plazo:
+          <input type="number" v-model="User.User_term" required />
         </label>
 
         <p v-if="error" class="error">{{ error }}</p>
 
-        <button class="buttonPopUpArticle" type="submit">Guardar</button>
-        <button class="buttonPopUpArticle" type="button" @click="closePopup">Cancelar</button>
+        <button class="buttonPopUpUser" type="submit">Guardar</button>
+        <button class="buttonPopUpUser" type="button" @click="closePopup">Cancelar</button>
       </form>
     </div>
   </div>
@@ -101,7 +106,7 @@ const closePopup = () => {
   margin-top: 4px;
 }
 
-.buttonPopUpArticle {
+.buttonPopUpUser {
   margin-right: 10px;
   background-color: #4caf50;
   color: white;

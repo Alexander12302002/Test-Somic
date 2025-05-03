@@ -1,7 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import PopupNuevoArticulo from '../components/ArticlePopUp.vue'
 
+const popupKey = ref(0)
+const showPopup = ref(false)
 const Articles = ref([]);
 const searchId = ref('');
 const apiUrl = 'http://localhost:3000/articles/';
@@ -26,6 +29,11 @@ const searchArticleById = async () => {
   }
 };
 
+
+const abrirPopup = () => {
+  popupKey.value++ 
+  showPopup.value = true
+}
 onMounted(fetchAllArticles);
 </script>
 
@@ -42,7 +50,7 @@ onMounted(fetchAllArticles);
         <button @click="searchArticleById">Buscar</button>
         <button @click="fetchAllArticles">Ver Todos</button>
       </div>
-      <button class="add-button">Agregar Nuevo Artículo</button>
+      <button class="add-button" @click="abrirPopup">Agregar Nuevo Artículo</button>
     </header>
 
     <table v-if="Articles.length > 0">
@@ -68,6 +76,12 @@ onMounted(fetchAllArticles);
       </tbody>
     </table>
     <p v-else>No se encontraron artículos.</p>
+    <PopupNuevoArticulo
+      v-if="showPopup"
+      :key="popupKey"
+      @onClose="showPopup = false"
+      @onSuccess="() => { fetchAllArticles(); showPopup = false }"
+    />
   </div>
 </template>
 

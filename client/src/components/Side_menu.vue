@@ -14,6 +14,7 @@
     </div>
 </template>
 
+
 <style scoped>
 .side-menu{
     background-color: #b4d2e4;

@@ -1,7 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import PopupNuevoUser from '../components/UserPopUp.vue'
 
+const popupKey = ref(0)
+const showPopup = ref(false)
 const Users = ref([]);
 const searchId = ref('');
 const apiUrl = 'http://localhost:3000/users/';
@@ -26,6 +29,10 @@ const searchUsersById = async () => {
   }
 };
 
+const abrirPopup = () => {
+  popupKey.value++ 
+  showPopup.value = true
+}
 onMounted(fetchAllUsers);
 </script>
 
@@ -42,7 +49,7 @@ onMounted(fetchAllUsers);
         <button @click="searchUsersById">Buscar</button>
         <button @click="fetchAllUsers">Ver Todos</button>
       </div>
-      <button class="add-button">Agregar Nuevo Artículo</button>
+      <button class="add-button" @click="abrirPopup">Agregar Nuevo Usuario</button>
     </header>
 
       <table v-if="Users.length > 0">
@@ -70,6 +77,12 @@ onMounted(fetchAllUsers);
       </tbody>
       </table>
       <p v-else>No se encontraron artículos.</p>
+      <PopupNuevoUser
+      v-if="showPopup"
+      :key="popupKey"
+      @onClose="showPopup = false"
+      @onSuccess="() => { fetchAllUsers(); showPopup = false }"
+    />
     </div>
 </template>
 
