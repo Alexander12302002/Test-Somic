@@ -10,8 +10,8 @@ export class FacturesController {
   @Post()
   async create(@Body() createFactureDto: CreateFactureDto) {
     try {
-      const user = await this.facturesService.create(createFactureDto);
-      return { message: 'Facture successfully created', user }
+      const Facture = await this.facturesService.create(createFactureDto);
+      return { message: 'Facture successfully created', Facture }
     } catch (error) {
       return { message: error.message };
     }
@@ -20,8 +20,8 @@ export class FacturesController {
   @Get()
   async findAll() {
     try {
-      const articles = await this.facturesService.findAll();
-      return { message: 'All factures registered', articles }
+      const Factures = await this.facturesService.findAll();
+      return { message: 'All factures registered', Factures }
     } catch (error) {
       return { message: error.message };
     }

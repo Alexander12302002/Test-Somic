@@ -19,7 +19,7 @@ const searchUsersById = async () => {
   if (!searchId.value) return;
   try {
     const response = await axios.get(`${apiUrl}${searchId.value}`);
-    Users.value = [response.data.users];
+    Users.value = [response.data.user]
   } catch (error) {
     console.error('Artículo no encontrado:', error);
     Users.value = [];
@@ -58,7 +58,7 @@ onMounted(fetchAllUsers);
           </tr>
         </thead>
         <tbody>
-        <tr v-for="user in Users" :key="user._id">
+        <tr v-for="user in Users" :key="user.User_CC">
           <td>{{ user.User_Name }}</td>
           <td>{{ user.User_LastName }}</td>
           <td>{{ user.User_email }}</td>

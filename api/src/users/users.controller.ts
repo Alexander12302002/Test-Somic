@@ -27,10 +27,10 @@ export class UsersController {
     }
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @Get(':cc')
+  async findOne(@Param('cc') cc: string) {
     try {
-      const user = await this.usersService.findOne(id);
+      const user = await this.usersService.findOne(cc);
       return { message: 'User found', user }
     } catch (error) {
       return { message: error.message };

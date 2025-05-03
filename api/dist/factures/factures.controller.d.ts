@@ -6,21 +6,21 @@ export declare class FacturesController {
     constructor(facturesService: FacturesService);
     create(createFactureDto: CreateFactureDto): Promise<{
         message: string;
-        user: import("./entities/facture.entity").Facture;
+        Facture: import("./entities/facture.entity").Facture;
     } | {
         message: any;
-        user?: undefined;
+        Facture?: undefined;
     }>;
     findAll(): Promise<{
         message: string;
-        articles: (import("mongoose").Document<unknown, {}, import("./entities/facture.entity").Facture, {}> & import("./entities/facture.entity").Facture & Required<{
+        Factures: (import("mongoose").Document<unknown, {}, import("./entities/facture.entity").Facture, {}> & import("./entities/facture.entity").Facture & Required<{
             _id: unknown;
         }> & {
             __v: number;
         })[];
     } | {
         message: any;
-        articles?: undefined;
+        Factures?: undefined;
     }>;
     findOne(id: string): Promise<{
         message: string;

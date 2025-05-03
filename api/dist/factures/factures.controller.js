@@ -24,8 +24,8 @@ let FacturesController = class FacturesController {
     }
     async create(createFactureDto) {
         try {
-            const user = await this.facturesService.create(createFactureDto);
-            return { message: 'Facture successfully created', user };
+            const Facture = await this.facturesService.create(createFactureDto);
+            return { message: 'Facture successfully created', Facture };
         }
         catch (error) {
             return { message: error.message };
@@ -33,8 +33,8 @@ let FacturesController = class FacturesController {
     }
     async findAll() {
         try {
-            const articles = await this.facturesService.findAll();
-            return { message: 'All factures registered', articles };
+            const Factures = await this.facturesService.findAll();
+            return { message: 'All factures registered', Factures };
         }
         catch (error) {
             return { message: error.message };

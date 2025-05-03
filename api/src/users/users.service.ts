@@ -33,9 +33,8 @@ export class UsersService {
     return AllUsers
   }
 
-  async findOne(id: string): Promise<User> {
-    const objectId = new ObjectId(id);
-    const User = await this.userModel.findOne({ _id: objectId });
+  async findOne(cc: string): Promise<User> {
+    const User = await this.userModel.findOne({ User_CC: cc });
     if (!User) {
       throw new ConflictException('dont exist the user');
     }

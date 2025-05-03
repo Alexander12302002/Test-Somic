@@ -22,7 +22,7 @@ export declare class UsersController {
         message: any;
         users?: undefined;
     }>;
-    findOne(id: string): Promise<{
+    findOne(cc: string): Promise<{
         message: string;
         user: import("./entities/user.entity").User;
     } | {

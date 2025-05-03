@@ -40,9 +40,8 @@ let UsersService = class UsersService {
         }
         return AllUsers;
     }
-    async findOne(id) {
-        const objectId = new mongodb_1.ObjectId(id);
-        const User = await this.userModel.findOne({ _id: objectId });
+    async findOne(cc) {
+        const User = await this.userModel.findOne({ User_CC: cc });
         if (!User) {
             throw new common_1.ConflictException('dont exist the user');
         }

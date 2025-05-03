@@ -11,7 +11,7 @@ export declare class UsersService {
     }> & {
         __v: number;
     })[]>;
-    findOne(id: string): Promise<User>;
+    findOne(cc: string): Promise<User>;
     update(id: string, updateUserDto: UpdateUserDto): Promise<User>;
     remove(id: string): Promise<void>;
 }
