@@ -21,10 +21,12 @@ let FacturesService = class FacturesService {
     factureModel;
     ArticuleModel;
     userModel;
-    constructor(factureModel, ArticuleModel, userModel) {
+    KardexModel;
+    constructor(factureModel, ArticuleModel, userModel, KardexModel) {
         this.factureModel = factureModel;
         this.ArticuleModel = ArticuleModel;
         this.userModel = userModel;
+        this.KardexModel = KardexModel;
     }
     async create(createFactureDto) {
         const objectId = new mongodb_1.ObjectId(createFactureDto.Fac_idUser);
@@ -57,15 +59,38 @@ let FacturesService = class FacturesService {
                 if (cantidad < 0 && balance + cantidad < 0) {
                     throw new common_1.ConflictException(`No hay suficiente saldo para el artículo: ${articleData.Art_Name}`);
                 }
-                articleDto.Fac_Unit_Price = precioVenta;
+                if (cantidad < 0) {
+                    articleDto.Fac_Unit_Price = articleDto.Fac_Unit_Price ?? precioVenta;
+                }
+                else {
+                    articleDto.Fac_Unit_Price = precioVenta;
+                }
                 articleDto.Fac_cost = costoArticulo;
-                articleDto.Fac_Total_Product = Math.abs(cantidad * precioVenta);
-                articleDto.Fac_Total_cost = Math.abs(cantidad * costoArticulo);
+                const precioUnitario = Number(articleDto.Fac_Unit_Price);
+                articleDto.Fac_Total_Product = Math.abs(cantidad * precioUnitario);
+                const costoUnitario = Number(articleDto.Fac_cost);
+                articleDto.Fac_Total_cost = Math.abs(cantidad * costoUnitario);
                 if (cantidad < 0 && precioVenta < costoArticulo) {
                     throw new common_1.ConflictException(`El precio de venta del artículo "${articleData.Art_Name}" no puede ser menor al costo (${costoArticulo}).`);
                 }
                 totalFactura += Number(articleDto.Fac_Total_Product);
                 totalCosto += Number(articleDto.Fac_Total_cost);
+                const articuloActualizado = await this.ArticuleModel.findById(articleData._id);
+                if (!articuloActualizado) {
+                    throw new common_1.ConflictException('dont exist article');
+                }
+                const kardexEntry = new this.KardexModel({
+                    Kar_Date_Admission: new Date(),
+                    Kar_Name_Article: articleData.Art_Name,
+                    Kar_kind: cantidad > 0 ? 'Entrada' : 'Salida',
+                    Kar_Amount: Math.abs(cantidad),
+                    Kar_cost: costoArticulo,
+                    Kar_Unit_Price: precioVenta,
+                    Kar_Total_Product: articleDto.Fac_Total_Product,
+                    Kar_Total_cost: articleDto.Fac_Total_cost,
+                    Kar_stock: articuloActualizado.Art_balance
+                });
+                await kardexEntry.save();
                 await this.ArticuleModel.updateOne({ _id: articleData._id }, { $inc: { Art_balance: cantidad } });
             }
             createFactureDto.Fac_Total = totalFactura;
@@ -121,7 +146,9 @@ exports.FacturesService = FacturesService = __decorate([
     __param(0, (0, mongoose_2.InjectModel)('factures', 'db1')),
     __param(1, (0, mongoose_2.InjectModel)('articles', 'db1')),
     __param(2, (0, mongoose_2.InjectModel)('users', 'db1')),
+    __param(3, (0, mongoose_2.InjectModel)('kardex', 'db1')),
     __metadata("design:paramtypes", [mongoose_1.Model,
+        mongoose_1.Model,
         mongoose_1.Model,
         mongoose_1.Model])
 ], FacturesService);

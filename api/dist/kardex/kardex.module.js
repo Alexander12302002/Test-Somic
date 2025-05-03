@@ -10,11 +10,16 @@ exports.KardexModule = void 0;
 const common_1 = require("@nestjs/common");
 const kardex_service_1 = require("./kardex.service");
 const kardex_controller_1 = require("./kardex.controller");
+const kardex_entity_1 = require("./entities/kardex.entity");
+const mongoose_1 = require("@nestjs/mongoose");
 let KardexModule = class KardexModule {
 };
 exports.KardexModule = KardexModule;
 exports.KardexModule = KardexModule = __decorate([
     (0, common_1.Module)({
+        imports: [
+            mongoose_1.MongooseModule.forFeature([{ name: 'kardex', schema: kardex_entity_1.KardexSchema }], 'db1')
+        ],
         controllers: [kardex_controller_1.KardexController],
         providers: [kardex_service_1.KardexService],
     })

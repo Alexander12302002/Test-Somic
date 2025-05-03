@@ -9,6 +9,7 @@ const cliente = ref(null)
 const productos = ref([])
 const totalVentas = ref(0)
 const totalCostos = ref(0)
+const fechaVencimiento = ref(null)
 
 const fetchCliente = async () => {
   try {
@@ -30,13 +31,11 @@ const fetchProductos = async () => {
         let totalProducto = item.Fac_Amount * item.Fac_Unit_Price
         let totalCosto = item.Fac_Amount * item.Fac_cost
 
-        // Si la cantidad es negativa, tomar el valor absoluto para los totales
         if (item.Fac_Amount < 0) {
           totalProducto = Math.abs(totalProducto)
           totalCosto = Math.abs(totalCosto)
         }
 
-        // Sumar al total general
         totalVentas.value += totalProducto
         totalCostos.value += totalCosto
 
@@ -66,16 +65,21 @@ const fetchProductos = async () => {
 onMounted(async () => {
   await fetchCliente()
   await fetchProductos()
+
+  if (cliente.value?.User_term != null) {
+    const fechaFactura = new Date(props.factura.Fac_Date)
+    fechaFactura.setDate(fechaFactura.getDate() + cliente.value.User_term)
+    fechaVencimiento.value = fechaFactura.toLocaleDateString()
+  }
 })
 </script>
-
 
 <template>
   <div class="popup-overlay">
     <div class="popup-content">
       <h2>Detalles de la Factura</h2>
       <p><strong>Fecha:</strong> {{ new Date(factura.Fac_Date).toLocaleDateString() }}</p>
-
+      <p><strong>Fecha de Vencimiento:</strong> {{ fechaVencimiento || 'Calculando...' }}</p>
       <p>
         <strong>Cliente:</strong>
         {{ cliente ? `${cliente.User_Name} ${cliente.User_LastName}` : 'Cargando...' }}
@@ -113,7 +117,6 @@ onMounted(async () => {
   </div>
 </template>
 
-
 <style scoped>
 .popup-overlay {
   position: fixed;
@@ -130,7 +133,7 @@ onMounted(async () => {
 .popup-content {
   background: white;
   padding: 20px;
-  width: 800px; /* Aumentar el tamaño */
+  width: 800px; 
   max-height: 90vh;
   overflow-y: auto;
   border-radius: 10px;
@@ -144,20 +147,20 @@ onMounted(async () => {
 
 .productos-list {
   margin-top: 10px;
-  max-height: 60vh; /* Limitar altura de la lista de productos */
-  overflow-y: auto; /* Hacer que la lista sea scrollable si es necesario */
+  max-height: 60vh; 
+  overflow-y: auto; 
 }
 
 .producto-header,
 .producto-item {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr; /* Asegurar espacio para el total */
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr; 
   gap: 10px;
   margin-bottom: 5px;
 }
 
 .producto-item p {
-  margin: 0; /* Eliminar margen innecesario */
+  margin: 0; 
   padding: 5px;
 }
 

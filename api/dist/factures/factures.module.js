@@ -14,6 +14,7 @@ const facture_entity_1 = require("./entities/facture.entity");
 const factures_controller_1 = require("./factures.controller");
 const user_entity_1 = require("../users/entities/user.entity");
 const article_entity_1 = require("../articles/entities/article.entity");
+const kardex_entity_1 = require("../kardex/entities/kardex.entity");
 let FacturesModule = class FacturesModule {
 };
 exports.FacturesModule = FacturesModule;
@@ -22,7 +23,8 @@ exports.FacturesModule = FacturesModule = __decorate([
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: 'factures', schema: facture_entity_1.FactureSchema }], 'db1'),
             mongoose_1.MongooseModule.forFeature([{ name: 'articles', schema: article_entity_1.ArticleSchema }], 'db1'),
-            mongoose_1.MongooseModule.forFeature([{ name: 'users', schema: user_entity_1.UserSchema }], 'db1')
+            mongoose_1.MongooseModule.forFeature([{ name: 'users', schema: user_entity_1.UserSchema }], 'db1'),
+            mongoose_1.MongooseModule.forFeature([{ name: 'kardex', schema: kardex_entity_1.KardexSchema }], 'db1')
         ],
         controllers: [factures_controller_1.FacturesController],
         providers: [factures_service_1.FacturesService],

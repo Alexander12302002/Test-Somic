@@ -6,18 +6,27 @@ export class CreateKardexDto {
 
     @IsString()
     @MaxLength(225)
-    Kar_Name: string;
+    Kar_Name_Article: string;
 
     @IsString()
     @MaxLength(225)
-    Kar_laboratory: string;
+    Kar_kind: string;
 
     @IsNumber()
-    Kar_balance: number;
+    Kar_Amount: number;
 
     @IsNumber()
     Kar_cost: number;
 
     @IsNumber()
-    Kar_sale_price: number
+    Kar_Unit_Price: number
+
+    @IsNumber()
+    Kar_Total_Product: number
+
+    @IsNumber()
+    Kar_Total_cost: number
+
+    @IsNumber()
+    Kar_stock: number
 }

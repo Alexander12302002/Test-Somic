@@ -8,27 +8,32 @@ export class KardexController {
   constructor(private readonly kardexService: KardexService) {}
 
   @Post()
-  create(@Body() createKardexDto: CreateKardexDto) {
-    return this.kardexService.create(createKardexDto);
+  async create(@Body() createKardexDto: CreateKardexDto) {
+    try {
+      const Kardex = await this.kardexService.create(createKardexDto);
+      return { message: 'Kardex successfully created', Kardex }
+    } catch (error) {
+      return { message: error.message };
+    }
   }
 
   @Get()
-  findAll() {
-    return this.kardexService.findAll();
+  async findAll() {
+    try {
+      const Kardex = await this.kardexService.findAll();
+      return { message: 'Kardex successfully found', Kardex }
+    } catch (error) {
+      return { message: error.message };
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.kardexService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateKardexDto: UpdateKardexDto) {
-    return this.kardexService.update(+id, updateKardexDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.kardexService.remove(+id);
+  async findOne(@Param('id') id: string) {
+    try {
+      const Kardex = await this.kardexService.findOne(id);
+      return { message: 'Kardex successfully found', Kardex }
+    } catch (error) {
+      return { message: error.message };
+    }
   }
 }

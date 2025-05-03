@@ -16,26 +16,37 @@ exports.KardexController = void 0;
 const common_1 = require("@nestjs/common");
 const kardex_service_1 = require("./kardex.service");
 const create_kardex_dto_1 = require("./dto/create-kardex.dto");
-const update_kardex_dto_1 = require("./dto/update-kardex.dto");
 let KardexController = class KardexController {
     kardexService;
     constructor(kardexService) {
         this.kardexService = kardexService;
     }
-    create(createKardexDto) {
-        return this.kardexService.create(createKardexDto);
+    async create(createKardexDto) {
+        try {
+            const Kardex = await this.kardexService.create(createKardexDto);
+            return { message: 'Kardex successfully created', Kardex };
+        }
+        catch (error) {
+            return { message: error.message };
+        }
     }
-    findAll() {
-        return this.kardexService.findAll();
+    async findAll() {
+        try {
+            const Kardex = await this.kardexService.findAll();
+            return { message: 'Kardex successfully found', Kardex };
+        }
+        catch (error) {
+            return { message: error.message };
+        }
     }
-    findOne(id) {
-        return this.kardexService.findOne(+id);
-    }
-    update(id, updateKardexDto) {
-        return this.kardexService.update(+id, updateKardexDto);
-    }
-    remove(id) {
-        return this.kardexService.remove(+id);
+    async findOne(id) {
+        try {
+            const Kardex = await this.kardexService.findOne(id);
+            return { message: 'Kardex successfully found', Kardex };
+        }
+        catch (error) {
+            return { message: error.message };
+        }
     }
 };
 exports.KardexController = KardexController;
@@ -44,36 +55,21 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_kardex_dto_1.CreateKardexDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], KardexController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], KardexController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], KardexController.prototype, "findOne", null);
-__decorate([
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_kardex_dto_1.UpdateKardexDto]),
-    __metadata("design:returntype", void 0)
-], KardexController.prototype, "update", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], KardexController.prototype, "remove", null);
 exports.KardexController = KardexController = __decorate([
     (0, common_1.Controller)('kardex'),
     __metadata("design:paramtypes", [kardex_service_1.KardexService])

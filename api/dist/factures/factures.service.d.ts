@@ -4,11 +4,13 @@ import { User } from 'src/users/entities/user.entity';
 import { UpdateFactureDto } from './dto/update-facture.dto';
 import { CreateFactureDto } from './dto/create-facture.dto';
 import { Article } from 'src/articles/entities/article.entity';
+import { Kardex } from '../kardex/entities/kardex.entity';
 export declare class FacturesService {
     private factureModel;
     private ArticuleModel;
     private userModel;
-    constructor(factureModel: Model<Facture>, ArticuleModel: Model<Article>, userModel: Model<User>);
+    private KardexModel;
+    constructor(factureModel: Model<Facture>, ArticuleModel: Model<Article>, userModel: Model<User>, KardexModel: Model<Kardex>);
     create(createFactureDto: CreateFactureDto): Promise<Facture>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, Facture, {}> & Facture & Required<{
         _id: unknown;
