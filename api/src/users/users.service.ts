@@ -53,29 +53,43 @@ export class UsersService {
     return user
   }
 
-  async findWalletUser(id: string){
+  async findWalletUser(id: string) {
     const objectId = new ObjectId(id);
     const user = await this.userModel.findById(objectId);
     if (!user) {
       throw new ConflictException('User not found');
     }
 
-    const factures = await this.factureModel.aggregate([{
-      $match: {
-        Fac_idUser: objectId,
-        Fac_Total: { $gt: 0 }
+    const factures = await this.factureModel.aggregate([
+      {
+        $match: {
+          Fac_idUser: objectId 
+        }
+      },
+      {
+        $unwind: "$Fac_Articles"
+      },
+      {
+        $match: {
+          "Fac_Articles.Fac_Operation": "entrada"
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          Fac_idUser: { $first: "$Fac_idUser" },
+          totalFactura: { $first: "$Fac_Total" }
+        }
+      },
+      {
+        $group: {
+          _id: "$Fac_idUser",
+          totalUsuario: { $sum: "$totalFactura" }
+        }
       }
-    },
-    {
-      $group: {
-        _id: "$Fac_idUser",
-        totalUsuario: { $sum: "$Fac_Total" }
-      }
-    }
-  ])
+    ])
     return factures
   }
-
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const objectId = new ObjectId(id);
     const user = await this.userModel.findById(objectId);

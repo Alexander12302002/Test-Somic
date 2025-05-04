@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString, IsNumber, IsArray, ValidateNested, IsDate, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsArray, ValidateNested, IsDate, IsOptional, IsIn } from 'class-validator';
 
 export class CreateFactureDto {
     @IsDate()
@@ -7,7 +7,7 @@ export class CreateFactureDto {
 
     @IsString()
     Fac_idUser: string
-
+    
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => ArticlesDTO)
@@ -23,6 +23,11 @@ export class CreateFactureDto {
 }
 
 export class ArticlesDTO {
+
+    @IsString()
+    @IsIn(["entrada", "salida"])
+    Fac_Operation: string
+
     @IsString()
     Fac_idArticle: string
 

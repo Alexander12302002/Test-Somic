@@ -63,16 +63,31 @@ let UsersService = class UsersService {
         if (!user) {
             throw new common_1.ConflictException('User not found');
         }
-        const factures = await this.factureModel.aggregate([{
+        const factures = await this.factureModel.aggregate([
+            {
                 $match: {
-                    Fac_idUser: objectId,
-                    Fac_Total: { $gt: 0 }
+                    Fac_idUser: objectId
+                }
+            },
+            {
+                $unwind: "$Fac_Articles"
+            },
+            {
+                $match: {
+                    "Fac_Articles.Fac_Operation": "entrada"
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    Fac_idUser: { $first: "$Fac_idUser" },
+                    totalFactura: { $first: "$Fac_Total" }
                 }
             },
             {
                 $group: {
                     _id: "$Fac_idUser",
-                    totalUsuario: { $sum: "$Fac_Total" }
+                    totalUsuario: { $sum: "$totalFactura" }
                 }
             }
         ]);

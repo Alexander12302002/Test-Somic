@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KardexService = void 0;
 const mongoose_1 = require("mongoose");
-const mongodb_1 = require("mongodb");
 const mongoose_2 = require("@nestjs/mongoose");
 const common_1 = require("@nestjs/common");
 let KardexService = class KardexService {
@@ -39,13 +38,14 @@ let KardexService = class KardexService {
         }
         return Kardex;
     }
-    async findOne(id) {
-        const objectId = new mongodb_1.ObjectId(id);
-        const Kardex = await this.KardexModel.findOne({ _id: objectId });
-        if (!Kardex) {
-            throw new common_1.ConflictException('dont exist Kardex');
+    async findOne(nombre) {
+        const kardexEntries = await this.KardexModel.find({
+            Kar_Name_Article: { $regex: new RegExp(`^${nombre}$`, 'i') }
+        });
+        if (!kardexEntries || kardexEntries.length === 0) {
+            throw new common_1.ConflictException('No existe Kardex');
         }
-        return Kardex;
+        return kardexEntries;
     }
 };
 exports.KardexService = KardexService;

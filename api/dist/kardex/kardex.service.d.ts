@@ -14,9 +14,9 @@ export declare class KardexService {
     }> & {
         __v: number;
     })[]>;
-    findOne(id: string): Promise<import("mongoose").Document<unknown, {}, Kardex, {}> & Kardex & Required<{
+    findOne(nombre: string): Promise<(import("mongoose").Document<unknown, {}, Kardex, {}> & Kardex & Required<{
         _id: unknown;
     }> & {
         __v: number;
-    }>;
+    })[]>;
 }

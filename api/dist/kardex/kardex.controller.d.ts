@@ -25,13 +25,13 @@ export declare class KardexController {
         message: any;
         Kardex?: undefined;
     }>;
-    findOne(id: string): Promise<{
+    findOne(nombre: string): Promise<{
         message: string;
-        Kardex: import("mongoose").Document<unknown, {}, import("./entities/kardex.entity").Kardex, {}> & import("./entities/kardex.entity").Kardex & Required<{
+        Kardex: (import("mongoose").Document<unknown, {}, import("./entities/kardex.entity").Kardex, {}> & import("./entities/kardex.entity").Kardex & Required<{
             _id: unknown;
         }> & {
             __v: number;
-        };
+        })[];
     } | {
         message: any;
         Kardex?: undefined;

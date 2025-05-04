@@ -6,6 +6,11 @@ exports.FactureSchema = new mongoose_1.Schema({
     Fac_Date: { type: Date, require: true },
     Fac_idUser: { type: mongoose_1.Schema.Types.ObjectId, ref: 'users' },
     Fac_Articles: [{
+            Fac_Operation: {
+                type: String,
+                require: true,
+                enum: ["entrada", "salida"]
+            },
             Fac_idArticle: { type: mongoose_1.Schema.Types.ObjectId, ref: 'articles' },
             Fac_Amount: { type: Number, require: true },
             Fac_Unit_Price: { type: Number, require: true },

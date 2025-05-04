@@ -8,6 +8,7 @@ const clientes = ref([])
 const productos = ref([])
 const userWallet = ref(0)
 const montoDisponible = ref(0)
+const tipoOperacion = ref('entrada')
 
 const formData = reactive({
   Fac_Date: '',
@@ -57,21 +58,13 @@ const handleChange = () => {
   const producto = productos.value.find(p => p._id === currentProduct.Fac_idArticle)
   if (!producto) return
 
-  if (currentProduct.Fac_Amount < 0) {
-    currentProduct.Fac_cost = 0
-    currentProduct.Fac_Unit_Price = Number(currentProduct.Fac_Unit_Price) || Number(producto.Art_sale_price) || 0
-    currentProduct.Fac_Total_Product = currentProduct.Fac_Amount * currentProduct.Fac_Unit_Price
-    currentProduct.Fac_Total_cost = 0
-  } else {
-    // Solo actualizar si no fue modificado
-    if (!currentProduct.Fac_cost || currentProduct.Fac_cost === 0) {
-      currentProduct.Fac_cost = Number(producto.Art_cost) || 0
-    }
+  const cantidad = Math.abs(currentProduct.Fac_Amount) || 0
 
-    currentProduct.Fac_Unit_Price = 0
-    currentProduct.Fac_Total_Product = 0
-    currentProduct.Fac_Total_cost = currentProduct.Fac_Amount * currentProduct.Fac_cost
-  }
+  currentProduct.Fac_cost = Number(producto.Art_cost) || 0
+  currentProduct.Fac_Unit_Price = Number(producto.Art_sale_price) || 0
+
+  currentProduct.Fac_Total_Product = cantidad * currentProduct.Fac_Unit_Price
+  currentProduct.Fac_Total_cost = cantidad * currentProduct.Fac_cost
 }
 
 
@@ -94,8 +87,8 @@ watch(() => formData.Fac_idUser, (newVal) => {
 })
 
 const addProduct = () => {
-  if (!currentProduct.Fac_idArticle || currentProduct.Fac_Amount === 0) {
-    error.value = 'Debe seleccionar un producto y cantidad'
+  if (!currentProduct.Fac_idArticle || currentProduct.Fac_Amount <= 0) {
+    error.value = 'Debe seleccionar un producto y una cantidad válida (> 0)'
     return
   }
 
@@ -105,12 +98,21 @@ const addProduct = () => {
     return
   }
 
-  if (currentProduct.Fac_Amount < 0 && Math.abs(currentProduct.Fac_Amount) > producto.Art_balance) {
-    error.value = 'La cantidad solicitada para devolución supera el saldo del producto'
-    return
+  const cantidad = Math.abs(currentProduct.Fac_Amount)
+
+  if (tipoOperacion.value === 'salida') {
+    if (cantidad > producto.Art_balance) {
+      error.value = 'La cantidad solicitada supera el saldo del producto'
+      return
+    }
+
+    if (currentProduct.Fac_Unit_Price < currentProduct.Fac_cost) {
+      error.value = 'El precio de venta no puede ser menor al costo del producto'
+      return
+    }
   }
 
-  const nuevoTotal = calcularTotalFactura() + (currentProduct.Fac_Amount < 0 ? 0 : currentProduct.Fac_Amount * currentProduct.Fac_cost)
+  const nuevoTotal = calcularTotalFactura() + (tipoOperacion.value === 'entrada' ? cantidad * currentProduct.Fac_cost : 0)
 
   if (nuevoTotal > montoDisponible.value) {
     error.value = 'El monto total de la factura supera el monto disponible del cliente'
@@ -118,9 +120,13 @@ const addProduct = () => {
   }
 
   error.value = ''
-  formData.Fac_Articles.push({ ...currentProduct })
+  formData.Fac_Articles.push({
+    ...currentProduct,
+    Fac_Amount: cantidad,
+    Fac_Operation: tipoOperacion.value
+  })
 
-  // Reset
+  // Limpiar formulario de producto
   currentProduct.Fac_idArticle = ''
   currentProduct.Fac_Amount = 1
   currentProduct.Fac_Unit_Price = 0
@@ -128,6 +134,8 @@ const addProduct = () => {
   currentProduct.Fac_Total_Product = 0
   currentProduct.Fac_Total_cost = 0
 }
+
+
 
 const handleSubmit = async () => {
   const totalFactura = calcularTotalFactura()
@@ -192,8 +200,17 @@ onMounted(() => {
           <select v-model="currentProduct.Fac_idArticle" required>
             <option value="">Seleccione un producto</option>
             <option v-for="producto in productos" :key="producto._id" :value="producto._id">
-              {{ producto.Art_Name }} - Saldo: {{ producto.Art_balance }}
+              {{ producto.Art_Name }} - Saldo: {{ producto.Art_balance }} - Laboratorio: {{ producto.Art_laboratory }}
             </option>
+          </select>
+        </label>
+
+        <!-- Tipo de operación -->
+        <label>
+          Tipo de operación:
+          <select v-model="tipoOperacion">
+            <option value="entrada">Entrada (Compra)</option>
+            <option value="salida">Salida (Venta/Devolución)</option>
           </select>
         </label>
 
@@ -203,28 +220,30 @@ onMounted(() => {
           <input
             type="number"
             v-model.number="currentProduct.Fac_Amount"
-            :min="-9999"
+            min="1"
             required
           />
         </label>
 
-        <!-- Precio Unidad (solo si devolución) -->
-        <label v-if="currentProduct.Fac_Amount < 0">
+        <!-- Precio Unidad -->
+        <label>
           Precio Unidad:
           <input
             type="number"
             v-model.number="currentProduct.Fac_Unit_Price"
             step="0.01"
+            :readonly="tipoOperacion === 'entrada'"
           />
         </label>
 
-        <!-- Costo Unitario (solo si compra) -->
-        <label v-if="currentProduct.Fac_Amount >= 0">
+        <!-- Costo Unitario -->
+        <label>
           Costo Unitario:
           <input
             type="number"
             v-model.number="currentProduct.Fac_cost"
             step="0.01"
+            :readonly="tipoOperacion === 'salida'"
           />
         </label>
 
@@ -238,12 +257,20 @@ onMounted(() => {
         <ul>
           <li v-for="(prod, index) in formData.Fac_Articles" :key="index">
             {{ getProductName(prod.Fac_idArticle) }} - Cantidad: {{ prod.Fac_Amount }}
-            <button type="button" class="popUpButtonDelete" @click="removeProduct(index)">
-              Eliminar
-            </button>
+            | Venta: {{ prod.Fac_Total_Product.toLocaleString('es-CO', { style: 'currency', currency: 'COP' }) }}
+            | Costo: {{ prod.Fac_Total_cost.toLocaleString('es-CO', { style: 'currency', currency: 'COP' }) }}
+            <button type="button" class="popUpButtonDelete" @click="removeProduct(index)">Eliminar</button>
           </li>
         </ul>
+        <p>
+          <strong>Total Venta:</strong>
+          {{ calcularTotalFactura().toLocaleString('es-CO', { style: 'currency', currency: 'COP' }) }}
+        </p>
 
+        <p>
+          <strong>Total Costo:</strong>
+          {{ calcularTotalCosto().toLocaleString('es-CO', { style: 'currency', currency: 'COP' }) }}
+        </p>
         <button type="submit" class="popUpButtonFactura">Guardar</button>
         <button type="button" class="popUpButtonFactura" @click="emitFn('onClose')">Cancelar</button>
       </form>

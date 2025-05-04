@@ -45,6 +45,7 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateFactureDto.prototype, "Fac_Total_cost", void 0);
 class ArticlesDTO {
+    Fac_Operation;
     Fac_idArticle;
     Fac_Amount;
     Fac_Unit_Price;
@@ -53,6 +54,11 @@ class ArticlesDTO {
     Fac_Total_cost;
 }
 exports.ArticlesDTO = ArticlesDTO;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsIn)(["entrada", "salida"]),
+    __metadata("design:type", String)
+], ArticlesDTO.prototype, "Fac_Operation", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)

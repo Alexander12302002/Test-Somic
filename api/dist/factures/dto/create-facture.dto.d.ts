@@ -6,6 +6,7 @@ export declare class CreateFactureDto {
     Fac_Total_cost: Number;
 }
 export declare class ArticlesDTO {
+    Fac_Operation: string;
     Fac_idArticle: string;
     Fac_Amount: Number;
     Fac_Unit_Price: Number;

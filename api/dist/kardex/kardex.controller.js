@@ -39,9 +39,9 @@ let KardexController = class KardexController {
             return { message: error.message };
         }
     }
-    async findOne(id) {
+    async findOne(nombre) {
         try {
-            const Kardex = await this.kardexService.findOne(id);
+            const Kardex = await this.kardexService.findOne(nombre);
             return { message: 'Kardex successfully found', Kardex };
         }
         catch (error) {
@@ -64,8 +64,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], KardexController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)(':nombre'),
+    __param(0, (0, common_1.Param)('nombre')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)

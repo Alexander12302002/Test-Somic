@@ -21,90 +21,96 @@ export class FacturesService {
   async create(createFactureDto: CreateFactureDto): Promise<Facture> {
     const objectId = new ObjectId(createFactureDto.Fac_idUser);
     const User = await this.userModel.findOne({ _id: objectId });
-
+  
     if (!User) {
       throw new ConflictException('User does not exist');
     }
-
+  
     if (createFactureDto.Fac_Articles && createFactureDto.Fac_Articles.length > 0) {
       const articleIds = createFactureDto.Fac_Articles.map(article =>
         new ObjectId(article.Fac_idArticle)
       );
-
+  
       const existingArticles = await this.ArticuleModel.find({ _id: { $in: articleIds } });
       const existingArticleIds = existingArticles.map(art => art.id.toString());
       const missingArticles = articleIds.filter(id => !existingArticleIds.includes(id.toString()));
-
+  
       if (missingArticles.length > 0) {
         throw new ConflictException(
           `Los siguientes artículos no existen: ${missingArticles.join(', ')}`
         );
       }
-
+  
       let totalFactura = 0;
       let totalCosto = 0;
-
-
+  
       for (const articleDto of createFactureDto.Fac_Articles) {
-        const articleData = existingArticles.find(a => a.id.toString() === articleDto.Fac_idArticle.toString());
-
+        const articleData = existingArticles.find(
+          a => a.id.toString() === articleDto.Fac_idArticle.toString()
+        );
+  
         if (!articleData) {
           throw new ConflictException(
             `Artículo con ID ${articleDto.Fac_idArticle} no encontrado.`
           );
         }
-
+  
         const cantidad = Number(articleDto.Fac_Amount);
+        const tipoMovimiento = articleDto.Fac_Operation;
+  
+        if (tipoMovimiento !== 'entrada' && tipoMovimiento !== 'salida') {
+          throw new ConflictException(
+            `Tipo de movimiento inválido para el artículo ${articleData.Art_Name}. Debe ser 'Entrada' o 'Salida'.`
+          );
+        }
+  
+        if ((tipoMovimiento === 'entrada' && cantidad <= 0) || 
+            (tipoMovimiento === 'salida' && cantidad <= 0)) {
+          throw new ConflictException(
+            `La cantidad debe ser mayor que cero para un movimiento de tipo ${tipoMovimiento} en el artículo ${articleData.Art_Name}`
+          );
+        }
+  
+        const cantidadFinal = tipoMovimiento === 'entrada' ? cantidad : -cantidad;
+  
         const balance = Number(articleData.Art_balance);
         const precioVenta = Number(articleData.Art_sale_price);
         const costoArticulo = Number(articleData.Art_cost);
 
-        if (cantidad === 0) {
-          throw new ConflictException(
-            `La cantidad no puede ser cero para el artículo: ${articleData.Art_Name}`
-          );
-        }
-
-
-        if (cantidad < 0 && balance + cantidad < 0) {
+        if (tipoMovimiento === 'salida' && balance + cantidadFinal < 0) {
           throw new ConflictException(
             `No hay suficiente saldo para el artículo: ${articleData.Art_Name}`
           );
         }
-
-        if (cantidad < 0) {
-          articleDto.Fac_Unit_Price = articleDto.Fac_Unit_Price ?? precioVenta;
-        } else {
-          articleDto.Fac_Unit_Price = precioVenta;
-        }
-
+  
+        articleDto.Fac_Unit_Price = articleDto.Fac_Unit_Price ?? precioVenta;
         articleDto.Fac_cost = costoArticulo;
-
-        // Calcular totales
+  
         const precioUnitario = Number(articleDto.Fac_Unit_Price);
-        articleDto.Fac_Total_Product = Math.abs(cantidad * precioUnitario);
         const costoUnitario = Number(articleDto.Fac_cost);
-        articleDto.Fac_Total_cost = Math.abs(cantidad * costoUnitario);
-        
-        // Validar precio de venta en salidas
-        if (cantidad < 0 && precioVenta < costoArticulo) {
+  
+        articleDto.Fac_Total_Product = cantidad * precioUnitario;
+        articleDto.Fac_Total_cost = cantidad * costoUnitario;
+  
+        if (tipoMovimiento === 'salida' && precioVenta < costoArticulo) {
           throw new ConflictException(
             `El precio de venta del artículo "${articleData.Art_Name}" no puede ser menor al costo (${costoArticulo}).`
           );
         }
-
+  
         totalFactura += Number(articleDto.Fac_Total_Product);
         totalCosto += Number(articleDto.Fac_Total_cost);
-
+  
         const articuloActualizado = await this.ArticuleModel.findById(articleData._id);
         if (!articuloActualizado) {
-          throw new ConflictException('dont exist article')
+          throw new ConflictException('No existe el artículo al actualizar el inventario');
         }
+  
         const kardexEntry = new this.KardexModel({
           Kar_Date_Admission: new Date(),
           Kar_Name_Article: articleData.Art_Name,
-          Kar_kind: cantidad > 0 ? 'Entrada' : 'Salida',
-          Kar_Amount: Math.abs(cantidad),
+          Kar_kind: tipoMovimiento,
+          Kar_Amount: cantidad,
           Kar_cost: costoArticulo,
           Kar_Unit_Price: precioVenta,
           Kar_Total_Product: articleDto.Fac_Total_Product,
@@ -112,21 +118,25 @@ export class FacturesService {
           Kar_stock: articuloActualizado.Art_balance
         });
         await kardexEntry.save();
-
-        // Actualizar inventario
+  
         await this.ArticuleModel.updateOne(
           { _id: articleData._id },
-          { $inc: { Art_balance: cantidad } }
+          { $inc: { Art_balance: cantidadFinal } }
         );
       }
-
-      // Asignar totales 
+  
+      if (totalFactura > User.User_quota) {
+        throw new ConflictException(
+          `El total de la factura (${totalFactura}) excede el cupo del usuario (${User.User_quota}).`
+        );
+      }
+  
       createFactureDto.Fac_Total = totalFactura;
       createFactureDto.Fac_Total_cost = totalCosto;
-
     }
+  
     const facture = new this.factureModel(createFactureDto);
-
+  
     try {
       await facture.save();
       return facture;
@@ -134,7 +144,8 @@ export class FacturesService {
       throw new InternalServerErrorException('Unexpected error when entering facture');
     }
   }
-
+  
+  
   async findAll() {
     const factures = await this.factureModel.find()
     if (!factures) {

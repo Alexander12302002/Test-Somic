@@ -15,12 +15,11 @@ const fetchAllKardex = async () => {
   }
 };
 
-
 const searchArticleById = async () => {
   if (!searchId.value) return;
   try {
     const response = await axios.get(`${apiUrl}${searchId.value}`);
-    Kardexs.value = [response.data.Kardex];
+    Kardexs.value = response.data.Kardex; 
   } catch (error) {
     console.error('Kardex no encontrado:', error);
     Kardexs.value = [];
@@ -38,7 +37,7 @@ onMounted(fetchAllKardex);
         <input
           v-model="searchId"
           type="text"
-          placeholder="Buscar por ID..."
+          placeholder="Buscar por nombre..."
         />
         <button @click="searchArticleById">Buscar</button>
         <button @click="fetchAllKardex">Ver Todo</button>

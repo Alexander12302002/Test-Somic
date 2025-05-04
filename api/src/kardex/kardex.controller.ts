@@ -27,10 +27,10 @@ export class KardexController {
     }
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @Get(':nombre')
+  async findOne(@Param('nombre') nombre: string) {
     try {
-      const Kardex = await this.kardexService.findOne(id);
+      const Kardex = await this.kardexService.findOne(nombre);
       return { message: 'Kardex successfully found', Kardex }
     } catch (error) {
       return { message: error.message };

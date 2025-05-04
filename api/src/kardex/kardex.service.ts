@@ -29,12 +29,16 @@ export class KardexService {
     return Kardex;
   }
 
-  async findOne(id: string) {
-    const objectId = new ObjectId(id)
-    const Kardex = await this.KardexModel.findOne({ _id: objectId })
-    if (!Kardex) {
-      throw new ConflictException('dont exist Kardex')
+  async findOne(nombre: string) {
+    const kardexEntries = await this.KardexModel.find({
+      Kar_Name_Article: { $regex: new RegExp(`^${nombre}$`, 'i') } 
+    });
+  
+    if (!kardexEntries || kardexEntries.length === 0) {
+      throw new ConflictException('No existe Kardex');
     }
-    return Kardex;
+  
+    return kardexEntries;
   }
+  
 }
