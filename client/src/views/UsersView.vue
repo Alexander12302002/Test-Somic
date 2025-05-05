@@ -44,7 +44,7 @@ onMounted(fetchAllUsers);
         <input
           v-model="searchId"
           type="text"
-          placeholder="Buscar por código..."
+          placeholder="Buscar por CC..."
         />
         <button @click="searchUsersById">Buscar</button>
         <button @click="fetchAllUsers">Ver Todos</button>

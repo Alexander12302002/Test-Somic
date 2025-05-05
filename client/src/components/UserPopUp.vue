@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-const show = ref(true) // controla visibilidad
+const show = ref(true) 
 const error = ref(null)
 
 const User = ref({

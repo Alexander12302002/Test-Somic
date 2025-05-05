@@ -9,23 +9,26 @@ const productos = ref([])
 const userWallet = ref(0)
 const montoDisponible = ref(0)
 const tipoOperacion = ref('entrada')
+const error = ref('')
 
+// Formulario principal
 const formData = reactive({
   Fac_Date: '',
   Fac_idUser: '',
-  Fac_Articles: []
-})
-
-const currentProduct = reactive({
-  Fac_idArticle: '',
-  Fac_Amount: 1,
-  Fac_Unit_Price: 0,
-  Fac_cost: 0,
-  Fac_Total_Product: 0,
+  Fac_Articles: [],
+  Fac_Total: 0,
   Fac_Total_cost: 0
 })
 
-const error = ref('')
+// Producto actual a agregar
+const currentProduct = reactive({
+  Fac_idArticle: '',
+  Fac_Amount: 1,
+  Fac_Unit_Price: null,
+  Fac_cost: null,
+  Fac_Total_Product: 0,
+  Fac_Total_cost: 0
+})
 
 const fetchClientes = async () => {
   const res = await axios.get('http://localhost:3000/users')
@@ -54,19 +57,28 @@ const fetchUserWallet = async (id) => {
   }
 }
 
-const handleChange = () => {
+// Este se ejecuta al seleccionar un nuevo producto
+const handleInitialChange = () => {
   const producto = productos.value.find(p => p._id === currentProduct.Fac_idArticle)
   if (!producto) return
 
-  const cantidad = Math.abs(currentProduct.Fac_Amount) || 0
+  // Solo establecer si no han sido modificados manualmente
+  if (currentProduct.Fac_cost === null) {
+    currentProduct.Fac_cost = Number(producto.Art_cost) || 0
+  }
+  if (currentProduct.Fac_Unit_Price === null) {
+    currentProduct.Fac_Unit_Price = Number(producto.Art_sale_price) || 0
+  }
 
-  currentProduct.Fac_cost = Number(producto.Art_cost) || 0
-  currentProduct.Fac_Unit_Price = Number(producto.Art_sale_price) || 0
-
-  currentProduct.Fac_Total_Product = cantidad * currentProduct.Fac_Unit_Price
-  currentProduct.Fac_Total_cost = cantidad * currentProduct.Fac_cost
+  handleChange()
 }
 
+const handleChange = () => {
+  const cantidad = Math.abs(currentProduct.Fac_Amount) || 0
+
+  currentProduct.Fac_Total_Product = cantidad * (currentProduct.Fac_Unit_Price || 0)
+  currentProduct.Fac_Total_cost = cantidad * (currentProduct.Fac_cost || 0)
+}
 
 const calcularTotalFactura = () => {
   return formData.Fac_Articles.reduce((acc, prod) => acc + (prod.Fac_Total_Product || 0), 0)
@@ -80,18 +92,15 @@ const removeProduct = (index) => {
   formData.Fac_Articles.splice(index, 1)
 }
 
-watch(() => currentProduct.Fac_idArticle, handleChange)
+watch(() => currentProduct.Fac_idArticle, handleInitialChange)
 watch(() => currentProduct.Fac_Amount, handleChange)
+watch(() => currentProduct.Fac_cost, handleChange)
+watch(() => currentProduct.Fac_Unit_Price, handleChange)
 watch(() => formData.Fac_idUser, (newVal) => {
   if (newVal) fetchUserWallet(newVal)
 })
 
 const addProduct = () => {
-  if (!currentProduct.Fac_idArticle || currentProduct.Fac_Amount <= 0) {
-    error.value = 'Debe seleccionar un producto y una cantidad válida (> 0)'
-    return
-  }
-
   const producto = productos.value.find(p => p._id === currentProduct.Fac_idArticle)
   if (!producto) {
     error.value = 'Producto no válido'
@@ -99,20 +108,23 @@ const addProduct = () => {
   }
 
   const cantidad = Math.abs(currentProduct.Fac_Amount)
+  if (cantidad <= 0) {
+    error.value = 'Debe ingresar una cantidad válida'
+    return
+  }
 
   if (tipoOperacion.value === 'salida') {
     if (cantidad > producto.Art_balance) {
       error.value = 'La cantidad solicitada supera el saldo del producto'
       return
     }
-
     if (currentProduct.Fac_Unit_Price < currentProduct.Fac_cost) {
       error.value = 'El precio de venta no puede ser menor al costo del producto'
       return
     }
   }
 
-  const nuevoTotal = calcularTotalFactura() + (tipoOperacion.value === 'entrada' ? cantidad * currentProduct.Fac_cost : 0)
+  const nuevoTotal = calcularTotalFactura() + currentProduct.Fac_Total_Product
 
   if (nuevoTotal > montoDisponible.value) {
     error.value = 'El monto total de la factura supera el monto disponible del cliente'
@@ -126,20 +138,17 @@ const addProduct = () => {
     Fac_Operation: tipoOperacion.value
   })
 
-  // Limpiar formulario de producto
+  // Limpiar campos del producto actual
   currentProduct.Fac_idArticle = ''
   currentProduct.Fac_Amount = 1
-  currentProduct.Fac_Unit_Price = 0
-  currentProduct.Fac_cost = 0
+  currentProduct.Fac_Unit_Price = null
+  currentProduct.Fac_cost = null
   currentProduct.Fac_Total_Product = 0
   currentProduct.Fac_Total_cost = 0
 }
 
-
-
 const handleSubmit = async () => {
-  const totalFactura = calcularTotalFactura()
-  formData.Fac_Total = totalFactura
+  formData.Fac_Total = calcularTotalFactura()
   formData.Fac_Total_cost = calcularTotalCosto()
 
   if (formData.Fac_Total > montoDisponible.value) {
